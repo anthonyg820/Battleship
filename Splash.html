@@ -6,15 +6,40 @@
         <meta charset="utf-8">
         <title> Battleship </title>
         <meta name="viewport" content="width=device-width; initial-scale=1.0;">
-		<link rel = "stylesheet" type = "text/css" media = "all" href = "Core.css">
-        <link href="https://fonts.googleapis.com/css?family=Coda|Saira+Condensed" rel="stylesheet">
+		<link rel = "stylesheet" type = "text/css" media = "all" href = "Splash.css">
+        <link href="https://fonts.googleapis.com/css?family=Black+Ops+One&display=swap" rel="stylesheet">
         <script src="Core.js"></script>
 
     </head>
 
-    <body>
+    <body onload = "setContentWrapperSize()" onresize = "setContentWrapperSize()">
 
-        
+        <div id = "content-wrapper">
+                
+            <div id = "contentCentered">
+
+                <h1 id = "curvedTitle">
+                    
+                    <span> B </span>
+                    <span> A </span>
+                    <span> T </span>
+                    <span> T </span>
+                    <span> L </span>
+                    <span> E </span>
+                    <span> S </span>
+                    <span> H </span>
+                    <span> I </span>
+                    <span> P </span>
+                    
+                </h1>
+
+                <div id = "shipBG"></div>
+
+                <div id = "buttonHolder"> <a id = "playButton" href = "#"> Play! </a> </div>
+
+            </div>
+
+        </div>
 
     </body>
 
