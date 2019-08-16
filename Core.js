@@ -9,3 +9,9 @@ function setContentWrapperSize()
     contentWrapper.style.width = screenWidth + "px";
     contentWrapper.style.height = screenHeight + "px";
 }
+
+function playAudio(audioID)
+{
+    var audio = document.getElementById(audioID);
+    audio.play();
+}

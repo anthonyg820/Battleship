@@ -1,0 +1,91 @@
+*{margin: 0px;
+    padding: 0px;}
+    
+  header, nav, section, article, footer,aside, hgroup{display: block;}
+  
+body{
+    background: #ffffff;
+}
+
+#playerTable{
+    margin: auto;
+    text-align: center;
+    color: dodgerblue;
+}
+
+#playerTable td{
+    width: 30px; 
+    height: 30px;
+    border: 1px solid #444444;
+    cursor: pointer;
+    position: relative;
+    font-family: 'Black Ops One', sans-serif;
+}
+
+#playerTable td:hover{
+    background: #c9c9c9;
+}
+
+#playerTable tr:first-child td{
+    border: none;
+    cursor: default;
+}
+
+#playerTable tr > td:nth-child(1){
+    border: none;
+    cursor: default;
+}
+
+#playerTable tr:first-child td:hover{
+    background: #ffffff;
+}
+
+#playerTable tr > td:nth-child(1):hover{
+    background: #ffffff;
+}
+
+#configureInstructions{
+    width: 500px;
+    margin: 20px auto;
+    font-family: 'Black Ops One', sans-serif;
+    text-align: center;
+    color: #444444;
+}
+
+.gameButton{
+    margin: 20px auto;
+    width: 150px;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 24px;
+    font-family: 'Black Ops One', sans-serif;
+    border: 2px solid #000000;
+    border-radius: 200px;
+}
+
+#startButton{
+    color: #ffffff;
+    background: #1E4C6D;
+}
+
+#randomizeButton{
+    color: #ffffff;
+    background: green;
+}
+
+
+.shipBlock{
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    border: 2px solid #1E4C6D;
+    background: rgba(60, 174, 255, 0.575);
+    cursor: move;
+}
+
+.threeShip{
+    width: 98px;
+    height: 30px;
+    z-index: 5;
+}
