@@ -22,10 +22,6 @@ body{
     font-family: 'Black Ops One', sans-serif;
 }
 
-#playerTable td:hover{
-    background: #c9c9c9;
-}
-
 #playerTable tr:first-child td{
     border: none;
     cursor: default;
@@ -45,7 +41,7 @@ body{
 }
 
 #configureInstructions{
-    width: 500px;
+    width: 400px;
     margin: 20px auto;
     font-family: 'Black Ops One', sans-serif;
     text-align: center;
