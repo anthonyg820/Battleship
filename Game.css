@@ -3,8 +3,14 @@
     
   header, nav, section, article, footer,aside, hgroup{display: block;}
   
-body{
-    background: #ffffff;
+  body{
+      background: #ffffff;
+    -webkit-touch-callout: none; /*Disable text selection*/
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #playerTable{
@@ -57,6 +63,9 @@ body{
     font-size: 24px;
     font-family: 'Black Ops One', sans-serif;
     border: 2px solid #000000;
+    -webkit-border-radius: 200px;
+    -moz-border-radius: 200px;
+    -o-border-radius: 200px;
     border-radius: 200px;
 }
 
@@ -65,9 +74,17 @@ body{
     background: #1E4C6D;
 }
 
+#startButton:hover{
+    background: rgb(42, 106, 151);
+}
+
 #randomizeButton{
     color: #ffffff;
     background: green;
+}
+
+#randomizeButton:hover{
+    background: rgb(14, 175, 14);
 }
 
 
@@ -77,6 +94,16 @@ body{
     left: -2px;
     border: 2px solid #1E4C6D;
     background: rgba(60, 174, 255, 0.575);
+    cursor: move;
+    z-index: 5;
+}
+
+.shipBlockMoving{
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    border: 2px solid rgb(39, 189, 169);
+    background: rgba(52, 203, 223, 0.37);
     cursor: move;
     z-index: 5;
 }

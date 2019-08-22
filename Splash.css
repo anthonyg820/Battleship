@@ -22,6 +22,9 @@ body{
 
 #curvedTitle{
   color: #ffffff; 
+  -webkit-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  -moz-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  -o-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
   text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
   font-family: 'Black Ops One', sans-serif;
   font-size: 60px;
@@ -42,13 +45,25 @@ body{
   padding: 10px 20px;
   font-size: 36px;
   text-decoration: none;
+  -webkit-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  -moz-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+  -o-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
   text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
   font-family: 'Black Ops One', sans-serif;
   -webkit-border-radius: 100px;
+  -moz-border-radius: 100px;
+  -o-border-radius: 100px;
+  border-radius: 100px;
+  -webkit-animation: playButtonShine 2s infinite;
+  -moz-animation: playButtonShine 2s infinite;
+  -o-animation: playButtonShine 2s infinite;
   animation: playButtonShine 2s infinite;
 }
 
 #playButton:hover{
+  -webkit-animation: playButtonPop 1s;
+  -moz-animation: playButtonPop 1s;
+  -o-animation: playButtonPop 1s;
   animation: playButtonPop 1s;
 }
 
@@ -81,78 +96,3 @@ body{
     border-width: 2px;
   }
 }
-
-/*
-#curvedTitle{display: block; background: red;}
-
-#curvedTitle span{display: inline-block;}
-
-#curvedTitle > span:nth-child(1){
-  color: white;
-  -webkit-transform: translateY(60px) rotate(-45deg);
-  -moz-transform: translateY(60px) rotate(-45deg);
-  transform: translateY(60px) rotate(-45deg);
-}
-
-#curvedTitle > span:nth-child(2){
-  color: white;
-  -webkit-transform: translateY(48px) rotate(-35deg);
-  -moz-transform: translateY(48px) rotate(-35deg);
-  transform: translateY(48px) rotate(-35deg);
-}
-
-#curvedTitle > span:nth-child(3){
-  color: white;
-  -webkit-transform: translateY(36px) rotate(-25deg);
-  -moz-transform: translateY(36px) rotate(-25deg);
-  transform: translateY(36px) rotate(-25deg);
-}
-
-#curvedTitle > span:nth-child(4){
-  color: white;
-  -webkit-transform: translateY(24px) rotate(-15deg);
-  -moz-transform: translateY(24px) rotate(-15deg);
-  transform: translateY(24px) rotate(-15deg);
-}
-
-#curvedTitle > span:nth-child(5){
-  color: white;
-  -webkit-transform: translateY(12px) rotate(-5deg);
-  -moz-transform: translateY(12px) rotate(-5deg);
-  transform: translateY(12px) rotate(-5deg);
-}
-
-#curvedTitle > span:nth-child(6){
-  color: white;
-  -webkit-transform: translateY(12px) rotate(5deg);
-  -moz-transform: translateY(12px) rotate(5deg);
-  transform: translateY(12px) rotate(5deg);
-}
-
-#curvedTitle > span:nth-child(7){
-  color: white;
-  -webkit-transform: translateY(24px) rotate(15deg);
-  -moz-transform: translateY(24px) rotate(15deg);
-  transform: translateY(24px) rotate(15deg);
-}
-
-#curvedTitle > span:nth-child(8){
-  color: white;
-  -webkit-transform: translateY(36px) rotate(25deg);
-  -moz-transform: translateY(36px) rotate(25deg);
-  transform: translateY(36px) rotate(25deg);
-}
-
-#curvedTitle > span:nth-child(9){
-  color: white;
-  -webkit-transform: translateY(48px) rotate(35deg);
-  -moz-transform: translateY(48px) rotate(35deg);
-  transform: translateY(48px) rotate(35deg);
-}
-
-#curvedTitle > span:nth-child(10){
-  color: white;
-  -webkit-transform: translateY(60px) rotate(45deg);
-  -moz-transform: translateY(60px) rotate(45deg);
-  transform: translateY(60px) rotate(45deg);
-}*/
