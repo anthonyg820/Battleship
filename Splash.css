@@ -61,15 +61,15 @@ body{
 }
 
 #playButton:hover{
-  -webkit-animation: playButtonPop 1s;
-  -moz-animation: playButtonPop 1s;
-  -o-animation: playButtonPop 1s;
-  animation: playButtonPop 1s;
+  -webkit-animation: playButtonPop 2s infinite;
+  -moz-animation: playButtonPop 2s infinite;
+  -o-animation: playButtonPop 2s infinite;
+  animation: playButtonPop 2s infinite;
 }
 
 @keyframes playButtonShine{
   10% {
-    background: #ff8000
+    background: #ff8000;
   }
   50%{
     background: red;
@@ -83,14 +83,17 @@ body{
   0%{
     border-width: 2px;
   }
-  25%{
+  10%{
     border-width: 6px;
   }
-  50%{
+  20%{
     border-width: 2px;
   }
-  75%{
+  30%{
     border-width: 6px;
+  }
+  40%{
+    border-width: 2px;
   }
   100%{
     border-width: 2px;

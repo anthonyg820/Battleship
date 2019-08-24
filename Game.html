@@ -12,160 +12,349 @@
 
     </head>
 
-    <body onload = "randomizeShipLocations()">
+    <body onload = "randomizePlayerShipLocations()">
 
         <h2 id = "configureInstructions"> Drag and drop to customize your ship locations. </h2>
 
-        <table id = "playerTable">
+        <div id = "gameHolder">
 
-            <tr>
-                <td></td>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-                <td>E</td>
-                <td>F</td>
-                <td>G</td>
-                <td>H</td>
-                <td>I</td>
-                <td>J</td>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td class = "A1"></td>
-                <td class = "B1"></td>
-                <td class = "C1"></td>
-                <td class = "D1"></td>
-                <td class = "E1"></td>
-                <td class = "F1"></td>
-                <td class = "G1"></td>
-                <td class = "H1"></td>
-                <td class = "I1"></td>
-                <td class = "J1"></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td class = "A2"></td>
-                <td class = "B2"></td>
-                <td class = "C2"></td>
-                <td class = "D2"></td>
-                <td class = "E2"></td>
-                <td class = "F2"></td>
-                <td class = "G2"></td>
-                <td class = "H2"></td>
-                <td class = "I2"></td>
-                <td class = "J2"></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td class = "A3"></td>
-                <td class = "B3"></td>
-                <td class = "C3"></td>
-                <td class = "D3"></td>
-                <td class = "E3"></td>
-                <td class = "F3"></td>
-                <td class = "G3"></td>
-                <td class = "H3"></td>
-                <td class = "I3"></td>
-                <td class = "J3"></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td class = "A4"></td>
-                <td class = "B4"></td>
-                <td class = "C4"></td>
-                <td class = "D4"></td>
-                <td class = "E4"></td>
-                <td class = "F4"></td>
-                <td class = "G4"></td>
-                <td class = "H4"></td>
-                <td class = "I4"></td>
-                <td class = "J4"></td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td class = "A5"></td>
-                <td class = "B5"></td>
-                <td class = "C5"></td>
-                <td class = "D5"></td>
-                <td class = "E5"></td>
-                <td class = "F5"></td>
-                <td class = "G5"></td>
-                <td class = "H5"></td>
-                <td class = "I5"></td>
-                <td class = "J5"></td>
-            </tr>
-            <tr>
-                <td>6</td>
-                <td class = "A6"></td>
-                <td class = "B6"></td>
-                <td class = "C6"></td>
-                <td class = "D6"></td>
-                <td class = "E6"></td>
-                <td class = "F6"></td>
-                <td class = "G6"></td>
-                <td class = "H6"></td>
-                <td class = "I6"></td>
-                <td class = "J6"></td>
-            </tr>
-            <tr>
-                <td>7</td>
-                <td class = "A7"></td>
-                <td class = "B7"></td>
-                <td class = "C7"></td>
-                <td class = "D7"></td>
-                <td class = "E7"></td>
-                <td class = "F7"></td>
-                <td class = "G7"></td>
-                <td class = "H7"></td>
-                <td class = "I7"></td>
-                <td class = "J7"></td>
-            </tr>
-            <tr>
-                <td>8</td>
-                <td class = "A8"></td>
-                <td class = "B8"></td>
-                <td class = "C8"></td>
-                <td class = "D8"></td>
-                <td class = "E8"></td>
-                <td class = "F8"></td>
-                <td class = "G8"></td>
-                <td class = "H8"></td>
-                <td class = "I8"></td>
-                <td class = "J8"></td>
-            </tr>
-            <tr>
-                <td>9</td>
-                <td class = "A9"></td>
-                <td class = "B9"></td>
-                <td class = "C9"></td>
-                <td class = "D9"></td>
-                <td class = "E9"></td>
-                <td class = "F9"></td>
-                <td class = "G9"></td>
-                <td class = "H9"></td>
-                <td class = "I9"></td>
-                <td class = "J9"></td>
-            </tr>
-            <tr>
-                <td>10</td>
-                <td class = "A10"></td>
-                <td class = "B10"></td>
-                <td class = "C10"></td>
-                <td class = "D10"></td>
-                <td class = "E10"></td>
-                <td class = "F10"></td>
-                <td class = "G10"></td>
-                <td class = "H10"></td>
-                <td class = "I10"></td>
-                <td class = "J10"></td>
-            </tr>
+            <div id = "gridTitles">
 
-        </table>
+                <h3>Your grid</h3>
+                <h3>Opponent's grid</h3>
 
-        <div id = "randomizeButton" class = "gameButton" onclick = "randomizeShipLocations()">Randomize</div>
-        <div id = "startButton" class = "gameButton">Start</div>
+            </div>
+
+            <table id = "playerTable" class = "gameGrid">
+
+                <tr>
+                    <td></td>
+                    <td>A</td>
+                    <td>B</td>
+                    <td>C</td>
+                    <td>D</td>
+                    <td>E</td>
+                    <td>F</td>
+                    <td>G</td>
+                    <td>H</td>
+                    <td>I</td>
+                    <td>J</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td class = "A1"></td>
+                    <td class = "B1"></td>
+                    <td class = "C1"></td>
+                    <td class = "D1"></td>
+                    <td class = "E1"></td>
+                    <td class = "F1"></td>
+                    <td class = "G1"></td>
+                    <td class = "H1"></td>
+                    <td class = "I1"></td>
+                    <td class = "J1"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class = "A2"></td>
+                    <td class = "B2"></td>
+                    <td class = "C2"></td>
+                    <td class = "D2"></td>
+                    <td class = "E2"></td>
+                    <td class = "F2"></td>
+                    <td class = "G2"></td>
+                    <td class = "H2"></td>
+                    <td class = "I2"></td>
+                    <td class = "J2"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td class = "A3"></td>
+                    <td class = "B3"></td>
+                    <td class = "C3"></td>
+                    <td class = "D3"></td>
+                    <td class = "E3"></td>
+                    <td class = "F3"></td>
+                    <td class = "G3"></td>
+                    <td class = "H3"></td>
+                    <td class = "I3"></td>
+                    <td class = "J3"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td class = "A4"></td>
+                    <td class = "B4"></td>
+                    <td class = "C4"></td>
+                    <td class = "D4"></td>
+                    <td class = "E4"></td>
+                    <td class = "F4"></td>
+                    <td class = "G4"></td>
+                    <td class = "H4"></td>
+                    <td class = "I4"></td>
+                    <td class = "J4"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td class = "A5"></td>
+                    <td class = "B5"></td>
+                    <td class = "C5"></td>
+                    <td class = "D5"></td>
+                    <td class = "E5"></td>
+                    <td class = "F5"></td>
+                    <td class = "G5"></td>
+                    <td class = "H5"></td>
+                    <td class = "I5"></td>
+                    <td class = "J5"></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td class = "A6"></td>
+                    <td class = "B6"></td>
+                    <td class = "C6"></td>
+                    <td class = "D6"></td>
+                    <td class = "E6"></td>
+                    <td class = "F6"></td>
+                    <td class = "G6"></td>
+                    <td class = "H6"></td>
+                    <td class = "I6"></td>
+                    <td class = "J6"></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td class = "A7"></td>
+                    <td class = "B7"></td>
+                    <td class = "C7"></td>
+                    <td class = "D7"></td>
+                    <td class = "E7"></td>
+                    <td class = "F7"></td>
+                    <td class = "G7"></td>
+                    <td class = "H7"></td>
+                    <td class = "I7"></td>
+                    <td class = "J7"></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td class = "A8"></td>
+                    <td class = "B8"></td>
+                    <td class = "C8"></td>
+                    <td class = "D8"></td>
+                    <td class = "E8"></td>
+                    <td class = "F8"></td>
+                    <td class = "G8"></td>
+                    <td class = "H8"></td>
+                    <td class = "I8"></td>
+                    <td class = "J8"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td class = "A9"></td>
+                    <td class = "B9"></td>
+                    <td class = "C9"></td>
+                    <td class = "D9"></td>
+                    <td class = "E9"></td>
+                    <td class = "F9"></td>
+                    <td class = "G9"></td>
+                    <td class = "H9"></td>
+                    <td class = "I9"></td>
+                    <td class = "J9"></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td class = "A10"></td>
+                    <td class = "B10"></td>
+                    <td class = "C10"></td>
+                    <td class = "D10"></td>
+                    <td class = "E10"></td>
+                    <td class = "F10"></td>
+                    <td class = "G10"></td>
+                    <td class = "H10"></td>
+                    <td class = "I10"></td>
+                    <td class = "J10"></td>
+                </tr>
+    
+            </table>
+
+            <div id = "turnArea">
+
+                <h2> Your turn! </h2>
+
+                <img id = "turnArrow" src = "Images/Arrow.png">
+
+            </div>
+
+            <p id = "actionMessage"></p><!--This <p> tag will contain 'HIT!' or 'MISS' each turn-->
+
+            <table id = "opponentTable" class = "gameGrid">
+
+                <tr>
+                    <td></td>
+                    <td>A</td>
+                    <td>B</td>
+                    <td>C</td>
+                    <td>D</td>
+                    <td>E</td>
+                    <td>F</td>
+                    <td>G</td>
+                    <td>H</td>
+                    <td>I</td>
+                    <td>J</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td class = "A1"></td>
+                    <td class = "B1"></td>
+                    <td class = "C1"></td>
+                    <td class = "D1"></td>
+                    <td class = "E1"></td>
+                    <td class = "F1"></td>
+                    <td class = "G1"></td>
+                    <td class = "H1"></td>
+                    <td class = "I1"></td>
+                    <td class = "J1"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td class = "A2"></td>
+                    <td class = "B2"></td>
+                    <td class = "C2"></td>
+                    <td class = "D2"></td>
+                    <td class = "E2"></td>
+                    <td class = "F2"></td>
+                    <td class = "G2"></td>
+                    <td class = "H2"></td>
+                    <td class = "I2"></td>
+                    <td class = "J2"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td class = "A3"></td>
+                    <td class = "B3"></td>
+                    <td class = "C3"></td>
+                    <td class = "D3"></td>
+                    <td class = "E3"></td>
+                    <td class = "F3"></td>
+                    <td class = "G3"></td>
+                    <td class = "H3"></td>
+                    <td class = "I3"></td>
+                    <td class = "J3"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td class = "A4"></td>
+                    <td class = "B4"></td>
+                    <td class = "C4"></td>
+                    <td class = "D4"></td>
+                    <td class = "E4"></td>
+                    <td class = "F4"></td>
+                    <td class = "G4"></td>
+                    <td class = "H4"></td>
+                    <td class = "I4"></td>
+                    <td class = "J4"></td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td class = "A5"></td>
+                    <td class = "B5"></td>
+                    <td class = "C5"></td>
+                    <td class = "D5"></td>
+                    <td class = "E5"></td>
+                    <td class = "F5"></td>
+                    <td class = "G5"></td>
+                    <td class = "H5"></td>
+                    <td class = "I5"></td>
+                    <td class = "J5"></td>
+                </tr>
+                <tr>
+                    <td>6</td>
+                    <td class = "A6"></td>
+                    <td class = "B6"></td>
+                    <td class = "C6"></td>
+                    <td class = "D6"></td>
+                    <td class = "E6"></td>
+                    <td class = "F6"></td>
+                    <td class = "G6"></td>
+                    <td class = "H6"></td>
+                    <td class = "I6"></td>
+                    <td class = "J6"></td>
+                </tr>
+                <tr>
+                    <td>7</td>
+                    <td class = "A7"></td>
+                    <td class = "B7"></td>
+                    <td class = "C7"></td>
+                    <td class = "D7"></td>
+                    <td class = "E7"></td>
+                    <td class = "F7"></td>
+                    <td class = "G7"></td>
+                    <td class = "H7"></td>
+                    <td class = "I7"></td>
+                    <td class = "J7"></td>
+                </tr>
+                <tr>
+                    <td>8</td>
+                    <td class = "A8"></td>
+                    <td class = "B8"></td>
+                    <td class = "C8"></td>
+                    <td class = "D8"></td>
+                    <td class = "E8"></td>
+                    <td class = "F8"></td>
+                    <td class = "G8"></td>
+                    <td class = "H8"></td>
+                    <td class = "I8"></td>
+                    <td class = "J8"></td>
+                </tr>
+                <tr>
+                    <td>9</td>
+                    <td class = "A9"></td>
+                    <td class = "B9"></td>
+                    <td class = "C9"></td>
+                    <td class = "D9"></td>
+                    <td class = "E9"></td>
+                    <td class = "F9"></td>
+                    <td class = "G9"></td>
+                    <td class = "H9"></td>
+                    <td class = "I9"></td>
+                    <td class = "J9"></td>
+                </tr>
+                <tr>
+                    <td>10</td>
+                    <td class = "A10"></td>
+                    <td class = "B10"></td>
+                    <td class = "C10"></td>
+                    <td class = "D10"></td>
+                    <td class = "E10"></td>
+                    <td class = "F10"></td>
+                    <td class = "G10"></td>
+                    <td class = "H10"></td>
+                    <td class = "I10"></td>
+                    <td class = "J10"></td>
+                </tr>
+    
+            </table>
+
+            <div id = "opponentTableCover">&nbsp</div> <!--This div will prevent click events when its the opponent's turn-->
+    
+            <div id = "startControls">
+    
+                    <div id = "randomizeButton" class = "gameButton" onclick = "randomizePlayerShipLocations()">Randomize</div>
+                    <div id = "startButton" class = "gameButton" onclick = "controller.startGame()">Start</div>
+                    
+            </div>
+
+            <h3 id = "startNotification">
+
+                START!
+
+            </h3>
+
+        </div>
+
+        <div id = "endOfGamePrompt">
+
+            <h2></h2> <!--This will say "CONGRATULATIONS YOU WON!" or "OH NO, YOU LOST!" once a game ends-->
+
+            <a id = "playAgainButton" class = "gameButton" href = "Game.html">Play again</a>
+
+        </div>
 
     </body>
 

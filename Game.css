@@ -13,37 +13,140 @@
     user-select: none;
 }
 
-#playerTable{
-    margin: auto;
-    text-align: center;
-    color: dodgerblue;
+#gameHolder{
+    width: 1000px;
+    margin: 20px auto;
+    transition: 0.5s;
 }
 
-#playerTable td{
+#gridTitles{
+    width: 100%;
+    display: none;
+    color: #222222;
+}
+
+#gridTitles h3{
+    float: left;
+    width: 50%;
+    font-size: 36px;
+    font-family: 'Black Ops One', sans-serif;
+}
+
+#gridTitles h3:nth-child(1){
+    text-align: left;
+}
+
+#gridTitles h3:nth-child(2){
+    text-align: right;
+}
+
+.gameGrid{
+    margin: auto;
+    text-align: center;
+}
+
+.gameGrid td{
     width: 30px; 
     height: 30px;
     border: 1px solid #444444;
-    cursor: pointer;
     position: relative;
     font-family: 'Black Ops One', sans-serif;
 }
 
-#playerTable tr:first-child td{
+.gameGrid tr:first-child td{
     border: none;
     cursor: default;
 }
 
-#playerTable tr > td:nth-child(1){
+.gameGrid tr > td:nth-child(1){
     border: none;
     cursor: default;
 }
 
-#playerTable tr:first-child td:hover{
-    background: #ffffff;
+#playerTable{
+    color: dodgerblue;
 }
 
-#playerTable tr > td:nth-child(1):hover{
+#opponentTable{
+    display: none;
+    float: left;
+    color: red;
+}
+
+#opponentTable td{cursor: pointer;}
+
+#opponentTable td:hover{background: #c9c9c9;}
+
+#opponentTable tr:first-child td:hover{
     background: #ffffff;
+    cursor: default;
+}
+
+#opponentTable tr > td:nth-child(1):hover{
+    background: #ffffff;
+    cursor: default;
+}
+
+#opponentTableCover{
+    width: 380px;
+    height: 380px;
+    background: green;
+    position: absolute;
+    top: 40px;
+    right: 0px;
+    z-index: 6;
+    -webkit-opacity: 0.0;
+    -moz-opacity: 0.0;
+    -o-opacity: 0.0;
+    opacity: 0.0;
+    display: none;
+}
+
+#turnArea{
+    display: none;
+    float: left;
+    width: 250px;
+    height: 100%;
+    text-align: center;
+    font-family: 'Black Ops One', sans-serif;
+}
+
+#turnArea h2{
+    margin-top: 100px;
+    color: #222222;
+}
+
+#turnArea p{
+    font-size: 48px;
+    color: #f8b600;
+    -webkit-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -moz-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -o-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+}
+
+#turnArrow{
+    width: 150px; 
+    height: 150px;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    -o-transition: 0.5s;
+    transition: 0.5s;
+}
+
+#actionMessage{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 48px;
+    text-align: center;
+    font-family: 'Black Ops One', sans-serif;
+    color: #f8b600;
+    -webkit-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -moz-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -o-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
 }
 
 #configureInstructions{
@@ -67,6 +170,7 @@
     -moz-border-radius: 200px;
     -o-border-radius: 200px;
     border-radius: 200px;
+    text-decoration: none;
 }
 
 #startButton{
@@ -108,32 +212,100 @@
     z-index: 5;
 }
 
-#oneShip_h{
+div[id*="oneShip_h"]{
     width: 30px;
     height: 30px;
 }
 
-#twoShip_h{
+div[id*="twoShip_h"]{
     width: 65.33px;
     height: 30px;
 }
 
-#threeShip_h{
+div[id*="threeShip_h"]{
     width: 98px;
     height: 30px;
 }
 
-#oneShip_v{
+div[id*="oneShip_v"]{
     width: 30px;
     height: 30px;
 }
 
-#twoShip_v{
+div[id*="twoShip_v"]{
     width: 30px;
     height: 62px;
 }
 
-#threeShip_v{
+div[id*="threeShip_v"]{
     width: 30px;
     height: 95px;
+}
+
+
+
+#startNotification{
+    position: fixed;
+    top: 50%;
+    margin-top: -100px;
+    left: 0%;
+    width: 100%;
+    text-align: center;
+    font-size: 108px;
+    font-family: 'Black Ops One', sans-serif;
+    color: #ff8000;
+    -webkit-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -moz-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    -o-text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
+    display: none;
+}
+
+@keyframes startNotificationAnimation{
+    0% {
+        font-size: 140px;
+    }
+    60%{
+        font-size: 60px;
+    }
+    100% {
+        font-size: 108px;
+    }
+}
+
+
+#endOfGamePrompt{
+    width: 500px; 
+    height: 200px;
+    position: fixed;
+    top: 130%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -250px;
+    background: #e9e9e9;
+    border: 4px solid dodgerblue;
+    z-index: 8;
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    transition: 1s;
+}
+
+#endOfGamePrompt h2{
+    color: #1E4C6D;
+    text-align: center;
+    display: block;
+    margin-top: 40px;
+    font-family: 'Black Ops One', sans-serif;
+}
+
+#playAgainButton{
+    color: #ffffff;
+    background: #1E4C6D;
+    margin: 40px auto 0 auto;
+    display: block;
+}
+
+#playAgainButton:hover{
+    background: rgb(42, 106, 151);
 }

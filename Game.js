@@ -13,6 +13,7 @@ var model =
     gridSize: 10,
     numOfShips: 6,
     shipsSunkPlayer: 0,
+    shipsSunkOpponent: 0,
     shipsPlayer: [{id: 'oneShip_h', locations: [null], hit: [false]},
             {id: 'oneShip_v', locations: [null], hit: [false]},
             {id: 'twoShip_h', locations: [null, null], hit: [false, false]},
@@ -20,52 +21,143 @@ var model =
             {id: 'threeShip_h', locations: [null, null, null], hit: [false, false, false]},
             {id: 'threeShip_v', locations: [null, null, null], hit: [false, false, false]}],
 
-    shipsOpponent: [{id: 'oneShip_h', locations: [null], hit: [false]},
-            {id: 'oneShip_v', locations: [null], hit: [false]},
-            {id: 'twoShip_h', locations: [null, null], hit: [false, false]},
-            {id: 'twoShip_v', locations: [null, null], hit: [false, false]},
-            {id: 'threeShip_h', locations: [null, null, null], hit: [false, false, false]},
-            {id: 'threeShip_v', locations: [null, null, null], hit: [false, false, false]}],
+    shipsOpponent: [{id: 'o_oneShip_h', locations: [null], hit: [false]},
+            {id: 'o_oneShip_v', locations: [null], hit: [false]},
+            {id: 'o_twoShip_h', locations: [null, null], hit: [false, false]},
+            {id: 'o_twoShip_v', locations: [null, null], hit: [false, false]},
+            {id: 'o_threeShip_h', locations: [null, null, null], hit: [false, false, false]},
+            {id: 'o_threeShip_v', locations: [null, null, null], hit: [false, false, false]}],
     
-    fire: function(guess){
-        for(var i = 0; i < this.shipsPlayer.length; i++)
+    opponentGuesses: [],
+
+    opponentNextGuess: null,
+
+    fireAtPlayer: function(){
+        //alert("Opponent turn over"); START HERE NEXT-----------------___---___--________----------
+
+        if(this.opponentNextGuess == null)
         {
-            var curShip = ships[i];
-            var hitIndex = curShip.locations.indexOf(guess);
-            if(hitIndex > 0)
-            {
-                curShip.hit[hitIndex] = true;
-                view.showHit(guess);
-            }
-            else
-            {
-                view.showMiss(guess);
-            }
+            /*var rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+            var rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
+
+            var cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+            var cellNumber = rand2;console.log(cellNumber);
+            var cellPos = cellLetter + cellNumber;
+            //console.log(cellPos);
+
+            var cell = document.getElementsByClassName(cellPos)[0];
+
+            do{
+                var cellPos = cellLetter + cellNumber;
+            }while(this.opponentGuesses)*/
         }
     },
 
-    isSunk: function(ship){
-        for(var i = 0; i < ship.length; i++)
+    fireAtOpponent: function(guess){
+        console.log("The player guessed: " + guess);
+
+        var actionMessage = document.getElementById("actionMessage");
+
+        var currentShip;
+        for(var i = 0; i < model.shipsOpponent.length; i++)
         {
-            if(!ship.hits[i])
-                return false;
+            currentShip = model.shipsOpponent[i];
+
+            var guessedCell =  document.getElementsByClassName(guess)[1];
+
+            guessedCell.style.cursor = "default";
+            guessedCell.setAttribute('onclick', null);
+            
+            if(currentShip.locations.indexOf(guess) >= 0)
+            {
+                var hitIndex = currentShip.locations.indexOf(guess);
+                view.showHit(guess, "opponent");
+                currentShip.hit[hitIndex] = true;
+                console.log(currentShip);
+                
+                if(this.isSunk(currentShip))
+                {
+                    view.showShipSunk("opponent");
+                    this.shipsSunkOpponent++;
+                    
+                    if(this.checkIfPlayerWon())
+                    {
+                        var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                        endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "CONGRATULATIONS, YOU WON!";
+                        endOfGamePrompt.style.top = "50%";
+                    }
+                }
+                return;
+            }
         }
+        view.showMiss(guess, "opponent");
+    },
+
+    isSunk: function(ship){
+        for(var i = 0; i < ship.hit.length; i++)
+        {
+            if(!ship.hit[i])
+            {
+                console.log("Ship not sunk");
+                return false;
+            }
+        }
+        console.log("Ship sunk!");
         return true;
+    },
+
+    checkIfPlayerWon: function(){
+        if(this.shipsSunkOpponent >= 6)
+            return true;
+
+        return false;
+    },
+
+    checkIfOpponentWon: function()
+    {
+        if(this.shipsSunkPlayer >= 6)
+            return true;
+            
+        return false;
     }
 }
 
 var view = 
 {
-    showHit: function(cellNumber){
-        var cell = document.getElementById("playerTable").getElementsByClassName(cellNumber)[0];
-        cell.style.background = "#";
+    showHit: function(cellLocation, playerOrOpponent){
+        if(playerOrOpponent === "player")
+            var cell = document.getElementById("playerTable").getElementsByClassName(cellLocation)[0];
+        else if(playerOrOpponent === "opponent")
+            var cell = document.getElementById("opponentTable").getElementsByClassName(cellLocation)[0];
+
+        var actionMessage = document.getElementById("actionMessage");
+        actionMessage.innerHTML = "HIT!";
+
+        cell.style.background = "url(Images/hit.png) no-repeat center";
+        cell.style.backgroundSize = "cover";
     },
-    showMiss: function(cellNumber){
-        var cell = document.getElementById("playerTable").getElementsByClassName(cellNumber)[0];
-        cell.style.background = "#";
+    showMiss: function(cellLocation, playerOrOpponent){
+        if(playerOrOpponent === "player")
+            var cell = document.getElementById("playerTable").getElementsByClassName(cellLocation)[0];
+        else if(playerOrOpponent === "opponent")
+            var cell = document.getElementById("opponentTable").getElementsByClassName(cellLocation)[0]; 
+
+        var actionMessage = document.getElementById("actionMessage");
+        actionMessage.innerHTML = "MISS!";
+
+        cell.style.background = "url(Images/miss.png) no-repeat center";
+        cell.style.backgroundSize = "50%";
     },
-    showShipSunk: function(){
-        
+    showShipSunk: function(playerOrOpponent){
+        var actionMessage = document.getElementById("actionMessage");
+
+        setTimeout(function()
+        {
+            if(playerOrOpponent === "opponent")
+                actionMessage.innerHTML = "YOU SUNK A BATTLESHIP!";
+            else if(playerOrOpponent === "player")
+                actionMessage.innerHTML = "YOUR SHIP HAS BEEN SUNK!";
+        }, 2000);
     }
 }
 
@@ -74,21 +166,107 @@ var controller =
     guessAmount: 0,
 
     activatePlayerBoard: function(){
+        var playerBoard = document.getElementById("playerTable");
+        playerBoard.style.float = "left";
 
+        var playerShips = playerBoard.getElementsByClassName("shipBlock");
+        for(var i = 0; i < playerShips.length; i++)
+        {
+            playerShips[i].setAttribute('onmousedown', null);
+            playerShips[i].style.cursor = "default";
+        }
+
+        var allCells = document.getElementById("opponentTable").getElementsByTagName("td");
+        //alert(allCells[20].className);
+        for(var j = 11; j < allCells.length; j++)
+        {
+            if(j % 11 != 0)
+                allCells[j].setAttribute('onclick', 'controller.handleGuess("' + allCells[j].className + '")');
+        }
     },
 
     activateOpponentBoard: function(){
-
+        var opponentBoard = document.getElementById("opponentTable");
+        opponentBoard.style.display = "block";
     },
 
     startGame: function(){
         this.activatePlayerBoard();
         this.activateOpponentBoard();
+        randomizeOpponentShipLocations();
+
+        var gameHolder = document.getElementById("gameHolder");
+        var startControls = document.getElementById("startControls");
+        var configInstructions = document.getElementById("configureInstructions");
+        var turnArea = document.getElementById("turnArea");
+        var gridTitles = document.getElementById("gridTitles");
+        
+        gridTitles.style.display = "block";
+        gameHolder.style.height = "420px";
+        gameHolder.style.position = "absolute";
+        gameHolder.style.top = "50%";
+        gameHolder.style.left = "50%";
+        gameHolder.style.margin = "-210px 0 0 -500px";
+        startControls.style.display = "none";
+        configInstructions.style.display = "none";
+        turnArea.style.display = "block";
+
+        console.log("Player ships \n");
+        console.log(model.shipsPlayer);
+        console.log("Opponent ships \n");
+        console.log(model.shipsOpponent);
+
+        this.playerTurn();
+
+        /*setTimeout(function()
+        {
+            document.getElementById("startNotification").style.display = "block";
+            document.getElementById("startNotification").style.animation = "startNotificationAnimation 0.5s";
+        }, 500);*/
     },
 
     handleGuess: function(guess){
-        model.fire(guess);
+        model.fireAtOpponent(guess);
         this.guessAmount++;
+
+        if(!model.checkIfPlayerWon() && !model.checkIfOpponentWon())
+            controller.opponentTurn();
+    },
+
+    playerTurn: function(){
+        var opponentTableCover = document.getElementById("opponentTableCover");
+        opponentTableCover.style.display = "none";
+
+        var turnText = document.getElementById("turnArea").getElementsByTagName("h2")[0];
+        turnText.innerHTML = "Your turn!";
+
+        var turnArrow = document.getElementById("turnArrow");
+        turnArrow.style.transform = "rotatex(0deg)";
+
+        var actionMessage = document.getElementById("actionMessage");
+        actionMessage.innerHTML = "";
+    },
+
+    opponentTurn: function(){
+        var opponentTableCover = document.getElementById("opponentTableCover");
+        opponentTableCover.style.display = "block";
+
+        var turnText = document.getElementById("turnArea").getElementsByTagName("h2")[0];
+        turnText.innerHTML = "Opponent's turn!";
+
+        var turnArrow = document.getElementById("turnArrow");
+        turnArrow.style.transform = "rotateZ(180deg)";
+
+        var actionMessage = document.getElementById("actionMessage");
+
+        setTimeout(function()
+        {
+            actionMessage.innerHTML = "";
+            model.fireAtPlayer();
+
+            if(!model.checkIfPlayerWon() && !model.checkIfOpponentWon())
+                controller.playerTurn();
+        }, 50);
     }
 }
 
@@ -122,7 +300,7 @@ function clearGrid()
         oneShipVertical.parentElement.removeChild(oneShipVertical);
 }
 
-function randomizeShipLocations()
+function randomizePlayerShipLocations()
 {
     clearGrid();
 
@@ -155,7 +333,7 @@ function randomizeShipLocations()
 
     //All code below deals with assigning ship locations
     //Three Ship Horizontal (REPEAT THE FOLLOWING FOR THE REST OF THE SHIPS)
-    var rand1 = Math.ceil((Math.random() * 7) + 1); //Selects the horizontal letter
+    var rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
     var rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
 
     var cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -165,7 +343,6 @@ function randomizeShipLocations()
 
     var cell = document.getElementsByClassName(cellPos)[0];
 
-    cell.appendChild(threeShipHorizontal);
     var shipToIterate;
     for(var i = 0; i < model.shipsPlayer.length; i++)
     {
@@ -184,13 +361,14 @@ function randomizeShipLocations()
     }
     console.log("SET: " + setLocations);
     //console.log(shipToIterate);
+    cell.appendChild(threeShipHorizontal);
     threeShipHorizontal.setAttribute("onmousedown", 'moveShipHorizontal("threeShip_h", 3)');
 
 
     //Two Ship Horizontal
     do
     {
-        rand1 = Math.ceil((Math.random() * 8) + 1); //Selects the horizontal letter
+        rand1 = Math.ceil((Math.random() * 9)); //Selects the horizontal letter
         rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
     
         cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -214,7 +392,7 @@ function randomizeShipLocations()
             shipToIterate.locations[i] = cellLetter + cellNumber;
             cellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter)+1];
         }
-    }while(shipsCollide(shipToIterate));
+    }while(shipsCollide(shipToIterate, "player"));
     
     //console.log(shipToIterate);
     cell.appendChild(twoShipHorizontal);
@@ -223,7 +401,7 @@ function randomizeShipLocations()
     //One Ship Horizontal
     do
     {
-        rand1 = Math.ceil((Math.random() * 9) + 1); //Selects the horizontal letter
+        rand1 = Math.ceil((Math.random() * 10)); //Selects the horizontal letter
         rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
     
         cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -247,7 +425,7 @@ function randomizeShipLocations()
             shipToIterate.locations[i] = cellLetter + cellNumber;
             cellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter)+1];
         }
-    }while(shipsCollide(shipToIterate));
+    }while(shipsCollide(shipToIterate, "player"));
     
     //console.log(shipToIterate);
     cell.appendChild(oneShipHorizontal);
@@ -257,7 +435,7 @@ function randomizeShipLocations()
     //Three Ship Vertical
     do
     {
-        rand1 = Math.ceil((Math.random() * 7) + 1); //Selects the horizontal letter
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
         rand2 = Math.ceil(Math.random() *7); //Selects the vertical number
     
         cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -281,7 +459,7 @@ function randomizeShipLocations()
             shipToIterate.locations[i] = cellLetter + cellNumber;
             cellNumber++;
         }
-    }while(shipsCollide(shipToIterate));
+    }while(shipsCollide(shipToIterate, "player"));
     
     //console.log(shipToIterate);
     cell.appendChild(threeShipVertical);
@@ -291,7 +469,7 @@ function randomizeShipLocations()
     //Two Ship Vertical
     do
     {
-        rand1 = Math.ceil((Math.random() * 7) + 1); //Selects the horizontal letter
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
         rand2 = Math.ceil(Math.random() *8); //Selects the vertical number
     
         cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -315,7 +493,7 @@ function randomizeShipLocations()
             shipToIterate.locations[i] = cellLetter + cellNumber;
             cellNumber++;
         }
-    }while(shipsCollide(shipToIterate));
+    }while(shipsCollide(shipToIterate, "player"));
     
     //console.log(shipToIterate);
     cell.appendChild(twoShipVertical);
@@ -325,7 +503,7 @@ function randomizeShipLocations()
     //One Ship Vertical
     do
     {
-        rand1 = Math.ceil((Math.random() * 7) + 1); //Selects the horizontal letter
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
         rand2 = Math.ceil(Math.random() *9); //Selects the vertical number
     
         cellLetter = horizPosToNums[rand1];console.log(cellLetter);
@@ -344,16 +522,212 @@ function randomizeShipLocations()
                 break;
             }
         }
+        for(var i = 0; i < 1; i++)
+        {
+            shipToIterate.locations[i] = cellLetter + cellNumber;
+            cellNumber++;
+        }
+    }while(shipsCollide(shipToIterate, "player"));
+    
+    //console.log(shipToIterate);
+    cell.appendChild(oneShipVertical);
+    oneShipVertical.setAttribute("onmousedown", 'moveShipVertical("oneShip_v", 1)');
+}
+
+
+
+function randomizeOpponentShipLocations()
+{
+    var setLocations = []; //This will hold all set ship positions from model.ships
+
+    //All code below deals with assigning ship locations
+    //Three Ship Horizontal (REPEAT THE FOLLOWING FOR THE REST OF THE SHIPS)
+    var rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+    var rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
+
+    var cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+    var cellNumber = rand2;console.log(cellNumber);
+    var cellPos = cellLetter + cellNumber;
+    //console.log(cellPos);
+
+    var cell = document.getElementsByClassName(cellPos)[1];
+
+    var shipToIterate;
+    for(var i = 0; i < model.shipsOpponent.length; i++)
+    {
+        var currentShip = model.shipsOpponent[i];
+        if(currentShip.id == "o_threeShip_h")
+        {
+            shipToIterate = currentShip;
+            break;
+        }
+    }
+    for(var i = 0; i < 3; i++)
+    {
+        shipToIterate.locations[i] = cellLetter + cellNumber;
+        setLocations.push(shipToIterate.locations[i]);
+        cellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter)+1];
+    }
+    console.log("SET: " + setLocations);
+    //console.log(shipToIterate);
+
+    //Two Ship Horizontal
+    do
+    {
+        rand1 = Math.ceil((Math.random() * 9)); //Selects the horizontal letter
+        rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
+    
+        cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+        cellNumber = rand2;console.log(cellNumber);
+        cellPos = cellLetter + cellNumber;
+        //console.log(cellPos);
+    
+        cell = document.getElementsByClassName(cellPos)[1];
+    
+        for(var i = 0; i < model.shipsOpponent.length; i++)
+        {
+            var currentShip = model.shipsOpponent[i];
+            if(currentShip.id == "o_twoShip_h")
+            {
+                shipToIterate = currentShip;
+                break;
+            }
+        }
+        for(var i = 0; i < 2; i++)
+        {
+            shipToIterate.locations[i] = cellLetter + cellNumber;
+            cellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter)+1];
+        }
+    }while(shipsCollide(shipToIterate, "opponent"));
+    
+    //console.log(shipToIterate);
+
+    //One Ship Horizontal
+    do
+    {
+        rand1 = Math.ceil((Math.random() * 10)); //Selects the horizontal letter
+        rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
+    
+        cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+        cellNumber = rand2;console.log(cellNumber);
+        cellPos = cellLetter + cellNumber;
+        //console.log(cellPos);
+    
+        cell = document.getElementsByClassName(cellPos)[1];
+    
+        for(var i = 0; i < model.shipsOpponent.length; i++)
+        {
+            var currentShip = model.shipsOpponent[i];
+            if(currentShip.id == "o_oneShip_h")
+            {
+                shipToIterate = currentShip;
+                break;
+            }
+        }
+        for(var i = 0; i < 1; i++)
+        {
+            shipToIterate.locations[i] = cellLetter + cellNumber;
+            cellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter)+1];
+        }
+    }while(shipsCollide(shipToIterate, "opponent"));
+    
+    //console.log(shipToIterate);
+
+
+    //Three Ship Vertical
+    do
+    {
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+        rand2 = Math.ceil(Math.random() *7); //Selects the vertical number
+    
+        cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+        cellNumber = rand2;console.log(cellNumber);
+        cellPos = cellLetter + cellNumber;
+        //console.log(cellPos);
+    
+        cell = document.getElementsByClassName(cellPos)[1];
+    
+        for(var i = 0; i < model.shipsOpponent.length; i++)
+        {
+            var currentShip = model.shipsOpponent[i];
+            if(currentShip.id == "o_threeShip_v")
+            {
+                shipToIterate = currentShip;
+                break;
+            }
+        }
+        for(var i = 0; i < 3; i++)
+        {
+            shipToIterate.locations[i] = cellLetter + cellNumber;
+            cellNumber++;
+        }
+    }while(shipsCollide(shipToIterate, "opponent"));
+    
+    //console.log(shipToIterate);
+
+
+    //Two Ship Vertical
+    do
+    {
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+        rand2 = Math.ceil(Math.random() *8); //Selects the vertical number
+    
+        cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+        cellNumber = rand2;console.log(cellNumber);
+        cellPos = cellLetter + cellNumber;
+        //console.log(cellPos);
+    
+        cell = document.getElementsByClassName(cellPos)[1];
+    
+        for(var i = 0; i < model.shipsOpponent.length; i++)
+        {
+            var currentShip = model.shipsOpponent[i];
+            if(currentShip.id == "o_twoShip_v")
+            {
+                shipToIterate = currentShip;
+                break;
+            }
+        }
         for(var i = 0; i < 2; i++)
         {
             shipToIterate.locations[i] = cellLetter + cellNumber;
             cellNumber++;
         }
-    }while(shipsCollide(shipToIterate));
+    }while(shipsCollide(shipToIterate, "opponent"));
     
     //console.log(shipToIterate);
-    cell.appendChild(oneShipVertical);
-    oneShipVertical.setAttribute("onmousedown", 'moveShipVertical("oneShip_v", 1)');
+
+
+    //One Ship Vertical
+    do
+    {
+        rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+        rand2 = Math.ceil(Math.random() *9); //Selects the vertical number
+    
+        cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+        cellNumber = rand2;console.log(cellNumber);
+        cellPos = cellLetter + cellNumber;
+        //console.log(cellPos);
+    
+        cell = document.getElementsByClassName(cellPos)[1];
+    
+        for(var i = 0; i < model.shipsOpponent.length; i++)
+        {
+            var currentShip = model.shipsOpponent[i];
+            if(currentShip.id == "o_oneShip_v")
+            {
+                shipToIterate = currentShip;
+                break;
+            }
+        }
+        for(var i = 0; i < 1; i++)
+        {
+            shipToIterate.locations[i] = cellLetter + cellNumber;
+            cellNumber++;
+        }
+    }while(shipsCollide(shipToIterate, "opponent"));
+    
+    //console.log(shipToIterate);
 }
 
 function moveShipHorizontal(targetID, shipLength)//Triggers using onmousedown event
@@ -446,17 +820,13 @@ function moveShipHorizontal(targetID, shipLength)//Triggers using onmousedown ev
         }
         console.log("ONMOUSEUP: " + shipToIterate.locations);
 
-        if(shipsCollide(shipToIterate))
+        if(shipsCollide(shipToIterate, "player"))
         {
             console.log("You cannot place ships on the same cell."); //CHANGE THIS TO APPEAR IN A DIV THE USER CAN SEE
             clickedShip.parentElement.removeChild(clickedShip);
             initialShipParent.appendChild(clickedShip);
             shipToIterate.locations = initialCoords;
             console.log("PLACED BACK COORDS: " + shipToIterate.locations);
-        }
-        else
-        {
-            setShipCoords(targetID, shipLength);
         }
     }
 }
@@ -529,7 +899,7 @@ function moveShipVertical(targetID, shipLength)//Triggers using onmousedown even
         document.onmousemove = null;
         clickedShip.setAttribute('class', 'shipBlock');
 
-        newShipPos = clickedShip.parentElement.className;
+        newShipPos = clickedShip.parentElement.className; console.log("sadas" + newShipPos);
         xCellLetter = newShipPos.substring(0, 1);
         xCellNum = horizPosToNums.indexOf(xCellLetter); //Convert the letter position to its number position
         yCellNum = parseInt(newShipPos.substring(1));
@@ -551,17 +921,13 @@ function moveShipVertical(targetID, shipLength)//Triggers using onmousedown even
         }
         console.log("ONMOUSEUP: " + shipToIterate.locations);
 
-        if(shipsCollide(shipToIterate))
+        if(shipsCollide(shipToIterate, "player"))
         {
             console.log("You cannot place ships on the same cell."); //CHANGE THIS TO APPEAR IN A DIV THE USER CAN SEE
             clickedShip.parentElement.removeChild(clickedShip);
             initialShipParent.appendChild(clickedShip);
             shipToIterate.locations = initialCoords;
             console.log("PLACED BACK COORDS: " + shipToIterate.locations);
-        }
-        else
-        {
-            setShipCoords(targetID, shipLength);
         }
     }
 }
@@ -596,33 +962,6 @@ function getShipCoords(shipParent, posOrientation, shipLength) //posOrientation 
     }
 
     return initialCoords;
-}
-
-function setShipCoords(targetID, shipLength)//Sets the ship positions within Model.ships
-{
-    var currentShip = document.getElementById(targetID);
-    var currentCell = currentShip.parentElement.className;
-
-    currentCellLetter = currentCell.substring(0, 1);
-    currentCellNumber = parseInt(currentCell.substring(1));
-
-    var shipToIterate;
-    for(var i = 0; i < model.shipsPlayer.length; i++)
-    {
-        var currentShip = model.shipsPlayer[i];
-        if(currentShip.id == targetID)
-        {
-            shipToIterate = currentShip;
-            break;
-        }
-    }
-
-    for(var i = 0; i < shipLength; i++)
-    {
-        shipToIterate.locations[i] = currentCellLetter + currentCellNumber;
-        currentCellLetter = horizPosToNums[horizPosToNums.indexOf(currentCellLetter)+1];
-    }
-    console.log(shipToIterate);
 }
 
 function moveRight(ship, shipLength)
@@ -689,12 +1028,22 @@ function moveUp(ship, shipLength)
     newShipParent.append(ship);
 }
 
-function shipsCollide(shipToTest)
+function shipsCollide(shipToTest, playerOrOpponent)
 {
+    var modelShips = [];
+    if(playerOrOpponent == "player")
+        modelShips = model.shipsPlayer;
+    else if(playerOrOpponent == "opponent")
+        modelShips = model.shipsOpponent;
+
+    console.log(playerOrOpponent);
+    console.log(shipToTest);
+    console.log(modelShips);
+
     var shipToIterate;
-    for(var i = 0; i < model.shipsPlayer.length; i++)
+    for(var i = 0; i < modelShips.length; i++)
     {
-        shipToIterate = model.shipsPlayer[i];
+        shipToIterate = modelShips[i];
         console.log(shipToIterate);
         if(shipToIterate.id != shipToTest.id)
         {
