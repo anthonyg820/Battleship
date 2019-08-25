@@ -34,7 +34,7 @@ var model =
     opponentNextGuess: null, //Assists in keeping track of the AI's path
 
     fireAtPlayerRandom: function(){
-        //console.log(cellPos);
+        console.log("FIRING RANDOMLY");
 
         var cellPos;
         var cellLetter;
@@ -514,7 +514,7 @@ var model =
             console.log("Index of current guess letter: " + indexOfCurrentGuessLetter);
 
             var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
-            var coreGuessNumber = this.opponentCoreGuess.substring(1);
+            var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
             var indexOfCoreGuessLetter = horizPosToNums.indexOf(coreGuessLetter);
             console.log("Index of core guess letter: " + indexOfCoreGuessLetter);
 
@@ -536,6 +536,8 @@ var model =
                 this.fireAtPlayerDown(1);
             else if(currentGuessNumber == (coreGuessNumber + 2)) //If its a second bottom guess
                 this.fireAtPlayerDown(2);
+            else
+                this.fireAtPlayerRandom();
         }
     },
 
