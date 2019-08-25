@@ -30,26 +30,514 @@ var model =
     
     opponentGuesses: [],
 
-    opponentNextGuess: null,
+    opponentCoreGuess: null, //The CoreGuess is the random cell value chosen when the AI isn't already on a path
+    opponentNextGuess: null, //Assists in keeping track of the AI's path
 
-    fireAtPlayer: function(){
-        //alert("Opponent turn over"); START HERE NEXT-----------------___---___--________----------
+    fireAtPlayerRandom: function(){
+        console.log("FIRING RANDOMLY");
 
-        if(this.opponentNextGuess == null)
-        {
-            /*var rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
+        var cellPos;
+        var cellLetter;
+        var cellNumber;
+
+        do{ //Keep trying random cells until it is a cell not already guessed
+            var rand1 = Math.ceil((Math.random() * 8)); //Selects the horizontal letter
             var rand2 = Math.ceil(Math.random() * 10); //Selects the vertical number
 
-            var cellLetter = horizPosToNums[rand1];console.log(cellLetter);
-            var cellNumber = rand2;console.log(cellNumber);
-            var cellPos = cellLetter + cellNumber;
-            //console.log(cellPos);
+            cellLetter = horizPosToNums[rand1];console.log(cellLetter);
+            cellNumber = rand2;console.log(cellNumber);
+            
+            cellPos = cellLetter + cellNumber;
+            console.log("Opponent randomly chose: " + cellPos);
+        }while(this.opponentGuesses.indexOf(cellPos) >= 0)
 
-            var cell = document.getElementsByClassName(cellPos)[0];
+        this.opponentGuesses.push(cellPos); //Add to list of already guessed cells
+        
+        var nextCellLetter = horizPosToNums[horizPosToNums.indexOf(cellLetter) - 1];
+        var nextCellNumber = cellNumber;
 
-            do{
-                var cellPos = cellLetter + cellNumber;
-            }while(this.opponentGuesses)*/
+        var currentShip;
+        for(var i = 0; i < model.shipsPlayer.length; i++)
+        {
+            currentShip = model.shipsPlayer[i];
+
+            if(currentShip.locations.indexOf(cellPos) >= 0) //If the players ship is hit
+            {
+                var hitIndex = currentShip.locations.indexOf(cellPos);
+                view.showHit(cellPos, "player");
+                currentShip.hit[hitIndex] = true;
+                console.log(currentShip);
+
+                //Set up the next opponent's turn
+                this.opponentCoreGuess = cellPos;
+                if(nextCellLetter != null && nextCellLetter != undefined) //If the current guess isn't on the left edge
+                    this.opponentNextGuess = nextCellLetter + nextCellNumber; //Make the next guess to the left of the current
+                else
+                    this.opponentNextGuess = cellLetter + (cellNumber - 1);
+
+                console.log("Opponent's next guess: " + this.opponentNextGuess);
+
+                if(this.isSunk(currentShip))
+                {
+                    view.showShipSunk("player");
+                    this.shipsSunkPlayer++;
+                    document.getElementById(currentShip.id).className = "sunkShipBlock";
+                    
+                    //Restart the AI
+                    this.opponentNextGuess = null;
+                    this.opponentCoreGuess = null;
+
+                    if(this.checkIfOpponentWon())
+                    {
+                        var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                        endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "OH NO, YOU LOST!";
+                        endOfGamePrompt.style.top = "50%";
+                    }
+                }
+                return;
+            }
+        }
+        view.showMiss(cellPos, "player");
+    },
+
+    fireAtPlayerLeft: function(directionIteration){
+        console.log("FIRING LEFT <" + directionIteration + ">");
+        var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
+        var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
+
+        var currentGuessLetter;
+        var currentGuessNumber;
+        var currentGuess;
+
+        var nextGuessLetter;
+        var nextGuessNumber;
+
+        if(directionIteration == 1) //If targeting one cell left of core
+        {
+            currentGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) - 1];
+            currentGuessNumber = coreGuessNumber;
+        }
+        else if(directionIteration == 2) //If targeting two cells left of core
+        {
+            currentGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) - 2];
+            currentGuessNumber = coreGuessNumber;
+        }
+        
+        currentGuess = currentGuessLetter + currentGuessNumber;
+        console.log("The opponent's current guess is: " + currentGuess);
+        console.log(this.opponentGuesses.indexOf(currentGuess));
+
+        if(horizPosToNums.indexOf(currentGuessLetter) > 0) //If the current guess is in the A - J bounds
+        {
+            if(this.opponentGuesses.indexOf(currentGuess) < 0 && !currentGuess.includes("undefined") && currentGuess.substring(1, 2) != "0") //If this guess hasn't been made before, continue with down fire execution
+            {
+                console.log("GUESS HAS NOT BEEN MADE BEFORE");
+                this.opponentGuesses.push(currentGuess); //Add to list of already guessed cells
+
+                var currentShip;
+                for(var i = 0; i < model.shipsPlayer.length; i++)
+                {
+                    currentShip = model.shipsPlayer[i];
+
+                    if(currentShip.locations.indexOf(currentGuess) >= 0) //If the players ship is hit
+                    {
+                        var hitIndex = currentShip.locations.indexOf(currentGuess);
+                        view.showHit(currentGuess, "player");
+                        currentShip.hit[hitIndex] = true;
+                        console.log(currentShip);
+
+                        //Set up the next opponent's turn
+                        if(currentGuessLetter != null && currentGuessLetter != undefined) //If the current guess isn't on the left edge
+                        {
+                            //Make the next guess two cells to the left of the core
+                            nextGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) - 2];
+                                
+                            nextGuessNumber = currentGuessNumber;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+                        else //If the current guess is on the left edge
+                        {
+                            //Make the next guess one to the top of the core
+                            nextGuessLetter = currentGuessLetter;
+                            nextGuessNumber = coreGuessNumber - 1;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+
+                        console.log("Opponent's next guess: " + this.opponentNextGuess);
+
+                        if(this.isSunk(currentShip))
+                        {
+                            view.showShipSunk("player");
+                            this.shipsSunkPlayer++;
+                            document.getElementById(currentShip.id).className = "sunkShipBlock";
+                            
+                            //Restart the AI
+                            this.opponentNextGuess = null;
+                            this.opponentCoreGuess = null;
+
+                            if(this.checkIfOpponentWon())
+                            {
+                                var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                                endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "OH NO, YOU LOST!";
+                                endOfGamePrompt.style.top = "50%";
+                            }
+                        }
+                        return;
+                    }
+                }
+                view.showMiss(currentGuess, "player");
+            }
+            else //If the guess has been made before, then fire at the top of core
+            {
+                console.log("BROKE CRITERIA");
+                this.fireAtPlayerUp(1);
+            }
+        }
+        else //If the guess is NaN
+        {
+            console.log("IT WAS NaN");
+            this.fireAtPlayerUp(1);
+        }
+    },
+
+    fireAtPlayerUp: function(directionIteration){
+        console.log("FIRING UP <" + directionIteration + ">");
+        var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
+        var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
+
+        var currentGuessLetter;
+        var currentGuessNumber;
+        var currentGuess;
+
+        var nextGuessLetter;
+        var nextGuessNumber;
+
+        if(directionIteration == 1) //If targeting one cell up of core
+        {
+            currentGuessLetter = coreGuessLetter;
+            currentGuessNumber = coreGuessNumber - 1;
+        }
+        else if(directionIteration == 2) //If targeting two cells up of core
+        {
+            currentGuessLetter = coreGuessLetter;
+            currentGuessNumber = coreGuessNumber - 2;
+        }
+        
+        currentGuess = currentGuessLetter + currentGuessNumber;
+        console.log("The opponent's current guess is: " + currentGuess);
+        console.log(this.opponentGuesses.indexOf(currentGuess));
+
+        if(horizPosToNums.indexOf(currentGuessLetter) > 0) //If the current guess is in the A - J bounds
+        {
+            if(this.opponentGuesses.indexOf(currentGuess) < 0 && !currentGuess.includes("undefined") && currentGuess.substring(1, 2) != "0") //If this guess hasn't been made before, continue with down fire execution
+            {
+                console.log("GUESS HAS NOT BEEN MADE BEFORE");
+                this.opponentGuesses.push(currentGuess); //Add to list of already guessed cells
+
+                var currentShip;
+                for(var i = 0; i < model.shipsPlayer.length; i++)
+                {
+                    currentShip = model.shipsPlayer[i];
+
+                    if(currentShip.locations.indexOf(currentGuess) >= 0) //If the players ship is hit
+                    {
+                        var hitIndex = currentShip.locations.indexOf(currentGuess);
+                        view.showHit(currentGuess, "player");
+                        currentShip.hit[hitIndex] = true;
+                        console.log(currentShip);
+
+                        //Set up the next opponent's turn
+                        if(currentGuessNumber != null && currentGuessNumber != undefined) //If the current guess isn't on the top edge
+                        {
+                            //Make the next guess two cells to the top of the core
+                            nextGuessLetter = coreGuessLetter;
+                                
+                            nextGuessNumber = coreGuessNumber - 2;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+                        else //If the current guess is on the top edge
+                        {
+                            //Make the next guess one to the right of the core
+                            nextGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) + 1];
+                            nextGuessNumber = coreGuessNumber;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+
+                        console.log("Opponent's next guess: " + this.opponentNextGuess);
+
+                        if(this.isSunk(currentShip))
+                        {
+                            view.showShipSunk("player");
+                            this.shipsSunkPlayer++;
+                            document.getElementById(currentShip.id).className = "sunkShipBlock";
+                            
+                            //Restart the AI
+                            this.opponentNextGuess = null;
+                            this.opponentCoreGuess = null;
+
+                            if(this.checkIfOpponentWon())
+                            {
+                                var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                                endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "OH NO, YOU LOST!";
+                                endOfGamePrompt.style.top = "50%";
+                            }
+                        }
+                        return;
+                    }
+                }
+                view.showMiss(currentGuess, "player");
+            }
+            else //If the guess has been made before, then fire at the right of core
+            {
+                console.log("BROKE CRITERIA");
+                this.fireAtPlayerRight(1);
+            }
+        }
+        else //If the guess is NaN
+        {
+            console.log("IT WAS NaN");
+            this.fireAtPlayerRight(1);
+        }
+    },
+
+    fireAtPlayerRight: function(directionIteration){
+        console.log("FIRING RIGHT <" + directionIteration + ">");
+        var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
+        var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
+
+        var currentGuessLetter;
+        var currentGuessNumber;
+        var currentGuess;
+
+        var nextGuessLetter;
+        var nextGuessNumber;
+
+        if(directionIteration == 1) //If targeting one cell right of core
+        {
+            currentGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) + 1];
+            currentGuessNumber = coreGuessNumber;
+        }
+        else if(directionIteration == 2) //If targeting two cells right of core
+        {
+            currentGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) + 2];
+            currentGuessNumber = coreGuessNumber;
+        }
+        
+        currentGuess = currentGuessLetter + currentGuessNumber;
+        console.log("The opponent's current guess is: " + currentGuess);
+        console.log(this.opponentGuesses.indexOf(currentGuess));
+
+        if(horizPosToNums.indexOf(currentGuessLetter) > 0) //If the current guess is in the A - J bounds
+        {
+            if(this.opponentGuesses.indexOf(currentGuess) < 0 && !currentGuess.includes("undefined") && currentGuess.substring(1, 2) != "0") //If this guess hasn't been made before, continue with down fire execution
+            {
+                console.log("GUESS HAS NOT BEEN MADE BEFORE");
+                this.opponentGuesses.push(currentGuess); //Add to list of already guessed cells
+
+                var currentShip;
+                for(var i = 0; i < model.shipsPlayer.length; i++)
+                {
+                    currentShip = model.shipsPlayer[i];
+
+                    if(currentShip.locations.indexOf(currentGuess) >= 0) //If the players ship is hit
+                    {
+                        var hitIndex = currentShip.locations.indexOf(currentGuess);
+                        view.showHit(currentGuess, "player");
+                        currentShip.hit[hitIndex] = true;
+                        console.log(currentShip);
+
+                        //Set up the next opponent's turn
+                        if(currentGuessLetter != null && currentGuessLetter != undefined) //If the current guess isn't on the right edge
+                        {
+                            //Make the next guess two cells to the right of the core
+                            nextGuessLetter = horizPosToNums[horizPosToNums.indexOf(coreGuessLetter) + 2];
+                                
+                            nextGuessNumber = currentGuessNumber;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+                        else //If the current guess is on the right edge
+                        {
+                            //Make the next guess one to the bottom of the core
+                            nextGuessLetter = currentGuessLetter;
+                            nextGuessNumber = coreGuessNumber + 1;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+
+                        console.log("Opponent's next guess: " + this.opponentNextGuess);
+
+                        if(this.isSunk(currentShip))
+                        {
+                            view.showShipSunk("player");
+                            this.shipsSunkPlayer++;
+                            document.getElementById(currentShip.id).className = "sunkShipBlock";
+                            
+                            //Restart the AI
+                            this.opponentNextGuess = null;
+                            this.opponentCoreGuess = null;
+
+                            if(this.checkIfOpponentWon())
+                            {
+                                var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                                endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "OH NO, YOU LOST!";
+                                endOfGamePrompt.style.top = "50%";
+                            }
+                        }
+                        return;
+                    }
+                }
+                view.showMiss(currentGuess, "player");
+            }
+            else //If the guess has been made before, then fire at the bottom of core
+            {
+                console.log("BROKE CRITERIA");
+                this.fireAtPlayerDown(1);
+            }
+        }
+        else //If the guess is NaN
+        {
+            console.log("IT WAS NaN");
+            this.fireAtPlayerDown(1);
+        }
+    },
+
+    fireAtPlayerDown: function(directionIteration){
+        console.log("FIRING DOWN <" + directionIteration + ">");
+        var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
+        var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
+
+        var currentGuessLetter;
+        var currentGuessNumber;
+        var currentGuess;
+
+        var nextGuessLetter;
+        var nextGuessNumber;
+
+        if(directionIteration == 1) //If targeting one cell down of core
+        {
+            currentGuessLetter = coreGuessLetter;
+            currentGuessNumber = coreGuessNumber + 1;
+        }
+        else if(directionIteration == 2) //If targeting two cells down of core
+        {
+            currentGuessLetter = coreGuessLetter;
+            currentGuessNumber = coreGuessNumber + 2;
+        }
+        
+        currentGuess = currentGuessLetter + currentGuessNumber;
+        console.log("The opponent's current guess is: " + currentGuess);
+        console.log(this.opponentGuesses.indexOf(currentGuess));
+
+        if(horizPosToNums.indexOf(currentGuessLetter) > 0) //If the current guess is in the A - J bounds
+        {
+            if(this.opponentGuesses.indexOf(currentGuess) < 0 && !currentGuess.includes("undefined") && currentGuess.substring(1, 2) != "0") //If this guess hasn't been made before, continue with down fire execution
+            {
+                console.log("GUESS HAS NOT BEEN MADE BEFORE");
+                this.opponentGuesses.push(currentGuess); //Add to list of already guessed cells
+
+                var currentShip;
+                for(var i = 0; i < model.shipsPlayer.length; i++)
+                {
+                    currentShip = model.shipsPlayer[i];
+
+                    if(currentShip.locations.indexOf(currentGuess) >= 0) //If the players ship is hit
+                    {
+                        var hitIndex = currentShip.locations.indexOf(currentGuess);
+                        view.showHit(currentGuess, "player");
+                        currentShip.hit[hitIndex] = true;
+                        console.log(currentShip);
+
+                        //Set up the next opponent's turn
+                        if(currentGuessNumber != null && currentGuessNumber != undefined) //If the current guess isn't on the bottom edge
+                        {
+                            //Make the next guess two cells to the bottom of the core
+                            nextGuessLetter = coreGuessLetter;
+                                
+                            nextGuessNumber = coreGuessNumber + 2;
+                            this.opponentNextGuess = nextGuessLetter + nextGuessNumber; 
+                        }
+                        else //If the current guess is on the bottom edge
+                        {
+                            this.fireAtPlayerRandom(); 
+                        }
+
+                        console.log("Opponent's next guess: " + this.opponentNextGuess);
+
+                        if(this.isSunk(currentShip))
+                        {
+                            view.showShipSunk("player");
+                            this.shipsSunkPlayer++;
+                            document.getElementById(currentShip.id).className = "sunkShipBlock";
+                            
+                            //Restart the AI
+                            this.opponentNextGuess = null;
+                            this.opponentCoreGuess = null;
+
+                            if(this.checkIfOpponentWon())
+                            {
+                                var endOfGamePrompt = document.getElementById("endOfGamePrompt");
+                                endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "OH NO, YOU LOST!";
+                                endOfGamePrompt.style.top = "50%";
+                            }
+                        }
+                        return;
+                    }
+                }
+                view.showMiss(currentGuess, "player");
+            }
+            else //If the guess has been made before, then fire at random
+            {
+                console.log("BROKE CRITERIA");
+                this.fireAtPlayerRandom();
+            }
+        }
+        else //If the guess is NaN
+        {
+            console.log("IT WAS NaN");
+            this.fireAtPlayerRandom();
+        }
+    },
+
+    fireAtPlayer: function(){
+        /*The opponent fires randomly until it hits. This becomes the core cell. Once it hits, the following turn 
+        the AI attempts to hit left, down, right, up of the core cell until it hits again*/
+
+        if(this.opponentNextGuess == null && this.opponentCoreGuess == null) //If its the first turn or the opponent just sunk the player's ship
+        {
+            this.fireAtPlayerRandom();
+        }
+        else
+        {
+            var currentGuess = this.opponentNextGuess;
+            var currentGuessLetter = currentGuess.substring(0, 1);
+            var currentGuessNumber = currentGuess.substring(1);
+            var indexOfCurrentGuessLetter = horizPosToNums.indexOf(currentGuessLetter);
+            console.log("Index of current guess letter: " + indexOfCurrentGuessLetter);
+
+            var coreGuessLetter = this.opponentCoreGuess.substring(0, 1);
+            var coreGuessNumber = parseInt(this.opponentCoreGuess.substring(1));
+            var indexOfCoreGuessLetter = horizPosToNums.indexOf(coreGuessLetter);
+            console.log("Index of core guess letter: " + indexOfCoreGuessLetter);
+
+
+            //AI Movement Logic
+            if(indexOfCurrentGuessLetter == (indexOfCoreGuessLetter - 1)) //If its a first left guess
+                this.fireAtPlayerLeft(1);
+            else if(indexOfCurrentGuessLetter == (indexOfCoreGuessLetter - 2)) //If its a second left guess
+                this.fireAtPlayerLeft(2);
+            else if(currentGuessNumber == (coreGuessNumber - 1)) //If its a first top guess
+                this.fireAtPlayerUp(1);
+            else if(currentGuessNumber == (coreGuessNumber - 2)) //If its a second top guess
+                this.fireAtPlayerUp(2);
+            else if(indexOfCurrentGuessLetter == (indexOfCoreGuessLetter + 1)) //If its a first right guess
+                this.fireAtPlayerRight(1);
+            else if(indexOfCurrentGuessLetter == (indexOfCoreGuessLetter + 2)) //If its a second right guess
+                this.fireAtPlayerRight(2);
+            else if(currentGuessNumber == (coreGuessNumber + 1)) //If its a first bottom guess
+                this.fireAtPlayerDown(1);
+            else if(currentGuessNumber == (coreGuessNumber + 2)) //If its a second bottom guess
+                this.fireAtPlayerDown(2);
+            else
+                this.fireAtPlayerRandom();
         }
     },
 
@@ -68,7 +556,7 @@ var model =
             guessedCell.style.cursor = "default";
             guessedCell.setAttribute('onclick', null);
             
-            if(currentShip.locations.indexOf(guess) >= 0)
+            if(currentShip.locations.indexOf(guess) >= 0) //If the player hits the opponent's ship
             {
                 var hitIndex = currentShip.locations.indexOf(guess);
                 view.showHit(guess, "opponent");
@@ -79,12 +567,16 @@ var model =
                 {
                     view.showShipSunk("opponent");
                     this.shipsSunkOpponent++;
-                    
+                    //document.getElementById(currentShip.id).className = "sunkShipBlock";
+
                     if(this.checkIfPlayerWon())
                     {
                         var endOfGamePrompt = document.getElementById("endOfGamePrompt");
                         endOfGamePrompt.getElementsByTagName("h2")[0].innerHTML = "CONGRATULATIONS, YOU WON!";
                         endOfGamePrompt.style.top = "50%";
+
+                        var victoryBox = document.getElementById("victoryBox");
+                        victoryBox.style.top = "100%";
                     }
                 }
                 return;
@@ -235,21 +727,25 @@ var controller =
 
     playerTurn: function(){
         var opponentTableCover = document.getElementById("opponentTableCover");
-        opponentTableCover.style.display = "none";
-
-        var turnText = document.getElementById("turnArea").getElementsByTagName("h2")[0];
-        turnText.innerHTML = "Your turn!";
-
-        var turnArrow = document.getElementById("turnArrow");
-        turnArrow.style.transform = "rotatex(0deg)";
-
-        var actionMessage = document.getElementById("actionMessage");
-        actionMessage.innerHTML = "";
+        opponentTableCover.style.display = "block";
+        opponentTableCover.style.left = "0";
+        opponentTableCover.style.right = "auto";
+        
+            var turnText = document.getElementById("turnArea").getElementsByTagName("h2")[0];
+            turnText.innerHTML = "Your turn!";
+    
+            var turnArrow = document.getElementById("turnArrow");
+            turnArrow.style.transform = "rotatex(0deg)";
+    
+            var actionMessage = document.getElementById("actionMessage");
+            actionMessage.innerHTML = "";
     },
 
     opponentTurn: function(){
         var opponentTableCover = document.getElementById("opponentTableCover");
         opponentTableCover.style.display = "block";
+        opponentTableCover.style.left = "auto";
+        opponentTableCover.style.right = "0";
 
         var turnText = document.getElementById("turnArea").getElementsByTagName("h2")[0];
         turnText.innerHTML = "Opponent's turn!";
@@ -266,7 +762,7 @@ var controller =
 
             if(!model.checkIfPlayerWon() && !model.checkIfOpponentWon())
                 controller.playerTurn();
-        }, 50);
+        }, 1250);
     }
 }
 
